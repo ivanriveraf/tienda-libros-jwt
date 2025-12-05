@@ -1,0 +1,137 @@
+<%- include('layout', { body: `
+  <h2 class="mb-3 text-success">Catálogo de Libros</h2>
+  <p class="text-secondary">
+    Para comprar debes haber iniciado sesión. El token se guarda en localStorage.
+  </p>
+
+  <div id="compraMsg" class="mb-3"></div>
+
+  <table class="table table-dark table-striped" id="tablaLibros">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Autor</th>
+        <th>Stock</th>
+        <th>Precio</th>
+        <th>Comprar</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const tbody = document.querySelector('#tablaLibros tbody');
+    const msg = document.getElementById('compraMsg');
+
+    async function cargarLibros() {
+      const res = await fetch('/api/libros');
+      const json = await res.json();
+      if (!json.ok) return;
+
+      tbody.innerHTML = '';
+      json.libros.forEach((libro) => {
+        const tr = document.createElement('tr');
+
+        let comprarHtml;
+        if (libro.stock > 0) {
+          comprarHtml =
+            '<form class="formCompra d-flex gap-1">' +
+              '<input type="number" name="cantidad" value="1" min="1" ' +
+              'class="form-control form-control-sm" style="width:80px" />' +
+              '<button class="btn btn-sm btn-success">Comprar</button>' +
+            '</form>';
+        } else {
+          comprarHtml =
+            '<span class="badge bg-danger">Sin stock</span>';
+        }
+
+        tr.innerHTML =
+          '<td>' + libro.id + '</td>' +
+          '<td>' + libro.titulo + '</td>' +
+          '<td>' + libro.autor + '</td>' +
+          '<td>' + libro.stock + '</td>' +
+          '<td>' + libro.precio + '</td>' +
+          '<td>' + comprarHtml + '</td>';
+
+        const form = tr.querySelector('.formCompra');
+        if (form) {
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+
+            // Usuario no autenticado
+            if (!token) {
+              msg.innerHTML =
+                '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
+                  '<strong>Debes iniciar sesión</strong> para comprar.' +
+                  '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                '</div>';
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              return;
+            }
+
+            const cantidad = form.cantidad.value;
+
+            // Mostrar cargando (spinner estilo Matrix)
+              msg.innerHTML =
+              '<div class="alert alert-info text-center bg-dark border border-success" role="alert">' +
+              '<div class="spinner-border spinner-border-sm me-2 spinner-matrix"></div>' +
+               '<span class="text-success">Procesando compra...</span>' +
+             '</div>';
+                window.scrollTo({ top: 0, behavior: "smooth" });
+
+
+            // Realizar compra
+            const respuesta = await fetch('/api/libros/' + libro.id + '/comprar', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+              },
+              body: JSON.stringify({ cantidad }),
+            });
+
+            // Tiempo mínimo para que el spinner sea visible
+        const MIN_SPINNER_TIME = 900;
+
+      // Marca de tiempo cuando empezó el spinner
+      const startTime = Date.now();
+
+          // Esperar respuesta del backend
+          const jsonCompra = await respuesta.json();
+
+          // Calcular cuánto tiempo falta para cumplir los 900ms
+            const elapsed = Date.now() - startTime;
+              const remaining = Math.max(0, MIN_SPINNER_TIME - elapsed);
+
+            // Mostrar el resultado después de que pase el tiempo mínimo
+              setTimeout(() => {
+              if (jsonCompra.ok) {
+           msg.innerHTML =
+      '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+        '<strong>Compra exitosa:</strong> ' + jsonCompra.msg +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+      '</div>';
+    cargarLibros();
+      } else {
+         msg.innerHTML =
+      '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+        (jsonCompra.msg || "Error al procesar la compra") +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+      '</div>';
+          }
+
+         window.scrollTo({ top: 0, behavior: "smooth" });
+          }, remaining);
+          });
+
+        }
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    cargarLibros();
+  </script>
+` }) %>
