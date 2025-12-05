@@ -35,6 +35,132 @@ Incluye una interfaz moderna con **Bootstrap 5**, animaciones estilo *Matrix*, y
 - Navbar dinámico según autenticación  
 - Spinner de carga personalizado  
 
+## 📌 Problema que Resuelve
+
+La aplicación aborda una problemática común en sistemas de ecommerce y gestión de inventario:
+controlar el acceso a las compras, validar stock en tiempo real y mantener la integridad del inventario, garantizando que solo usuarios autenticados puedan realizar transacciones y que estas afecten correctamente la disponibilidad del producto.
+
+El sistema busca resolver:
+
+Compras sin autenticación
+
+Inconsistencias en el stock
+
+Falta de trazabilidad en las acciones del usuario
+
+Necesidad de una interfaz simple para visualizar el catálogo y operar compras
+
+### 💡 Solución Implementada
+
+La aplicación desarrolla una tienda de libros con autenticación JWT, permitiendo que:
+
+Usuarios puedan registrarse e iniciar sesión
+
+Solo usuarios autenticados puedan acceder a la ruta protegida /libros/:id/comprar
+
+Al comprar un libro:
+
+Se valida el stock disponible
+
+Se descuenta en tiempo real
+
+Se actualiza la tabla del catálogo automáticamente
+
+Además incorpora:
+
+PostgreSQL + Sequelize para una gestión robusta de datos
+
+Middleware de autenticación para proteger rutas sensibles
+
+Bootstrap 5 + EJS para una interfaz limpia y responsiva
+
+Animaciones y feedback visual (spinner Matrix, alertas dinámicas) para mejorar la experiencia de usuario
+
+### 👤 Rol en el Proyecto
+
+Este proyecto fue desarrollado íntegramente por Iván Rivera, cumpliendo roles de:
+
+Diseño del backend
+
+Modelos, rutas y controladores
+
+Autenticación JWT
+
+Middleware de seguridad
+
+Lógica de compra y validación
+
+Diseño del frontend
+
+Interfaz con Bootstrap
+
+Renderizado dinámico con EJS
+
+Componentes interactivos con JavaScript
+
+Arquitectura y DevOps
+
+Configuración de entorno .env
+
+Gestión del repositorio con Git y GitHub
+
+Deploy de base de datos PostgreSQL en Render
+
+Deploy del servicio web
+
+### 🧱 Arquitectura del Sistema
+Cliente (Browser)
+    │
+    ├── Frontend EJS + Bootstrap
+    │      - Formulario login/registro
+    │      - Catálogo dinámico de libros
+    │      - Spinner y alertas interactivas
+    │
+API REST (Node.js + Express)
+    │
+    ├── Rutas públicas:
+    │      POST /api/auth/registro
+    │      POST /api/auth/login
+    │      GET  /api/libros
+    │
+    ├── Rutas protegidas:
+    │      POST /api/libros/:id/comprar
+    │
+    ├── Middleware JWT
+    │      - Verifica token en Authorization
+    │
+Base de Datos (PostgreSQL + Sequelize)
+    │
+    ├── Modelo Usuario
+    ├── Modelo Libro
+    ├── Validaciones de stock
+    └── Seed/reset automático (modo desarrollo)
+
+### 🔄 Flujo Principal de Compra
+
+Usuario inicia sesión → recibe un JWT
+
+Frontend guarda el token en localStorage
+
+Usuario abre /libros
+
+Al presionar “Comprar”:
+
+Se envía POST con el token en el header
+
+Middleware verifica el JWT
+
+Controlador valida stock
+
+Sequelize descuenta inventario
+
+UI muestra:
+
+Spinner Matrix
+
+Mensaje de éxito/error
+
+Tabla actualizada 
 ---
 
 ## 📌 Características Principales
