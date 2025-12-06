@@ -108,34 +108,6 @@ Deploy de base de datos PostgreSQL en Render
 
 Deploy del servicio web
 
-### 🧱 Arquitectura del Sistema
-Cliente (Browser)
-    │
-    ├── Frontend EJS + Bootstrap
-    │      - Formulario login/registro
-    │      - Catálogo dinámico de libros
-    │      - Spinner y alertas interactivas
-    │
-API REST (Node.js + Express)
-    │
-    ├── Rutas públicas:
-    │      POST /api/auth/registro
-    │      POST /api/auth/login
-    │      GET  /api/libros
-    │
-    ├── Rutas protegidas:
-    │      POST /api/libros/:id/comprar
-    │
-    ├── Middleware JWT
-    │      - Verifica token en Authorization
-    │
-Base de Datos (PostgreSQL + Sequelize)
-    │
-    ├── Modelo Usuario
-    ├── Modelo Libro
-    ├── Validaciones de stock
-    └── Seed/reset automático (modo desarrollo)
-
 ### 🔄 Flujo Principal de Compra
 
 Usuario inicia sesión → recibe un JWT
