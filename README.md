@@ -132,7 +132,6 @@ Spinner Matrix
 
 Mensaje de éxito/error
 
-Tabla actualizada 
 ---
 
 ## 📌 Características Principales
