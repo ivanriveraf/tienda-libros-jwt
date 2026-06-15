@@ -1,10 +1,27 @@
 <%- include('layout', { body: `
-  <div class="text-center">
-    <h1 class="text-success mb-3">Tienda de Libros con JWT</h1>
-    <p class="lead">
-      Regístrate, inicia sesión y compra libros. Solo usuarios autenticados pueden comprar.
+  <div class="matrix-hero text-center">
+    <h1 class="glitch mb-3" data-text="Tienda de Libros JWT">Tienda de Libros JWT</h1>
+    <p class="lead mb-4">
+      <span id="typed"></span><span class="type-cursor">&nbsp;</span>
     </p>
-    <a href="/libros" class="btn btn-success me-2">Ver Libros</a>
+    <a href="/libros" class="btn btn-success me-2">&gt; Ver Libros</a>
     <a href="/login" class="btn btn-outline-success">Iniciar Sesión</a>
   </div>
+
+  <script>
+    (function () {
+      var frase = 'Registrate, inicia sesion y compra libros. Solo usuarios autenticados pueden comprar.';
+      var el = document.getElementById('typed');
+      var i = 0;
+      function escribir() {
+        if (!el) return;
+        if (i <= frase.length) {
+          el.textContent = frase.slice(0, i);
+          i++;
+          setTimeout(escribir, 35);
+        }
+      }
+      escribir();
+    })();
+  </script>
 ` }) %>
